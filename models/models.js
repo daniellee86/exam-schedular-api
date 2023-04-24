@@ -1,4 +1,8 @@
 const fs = require("fs/promises");
+const {
+  filterExamsByDate,
+  filterExamsByNameOrLocation,
+} = require("../utils/filters");
 
 const readAllExams = async (filterBy, filterTerm, startDate, endDate, next) => {
   try {
@@ -8,39 +12,16 @@ const readAllExams = async (filterBy, filterTerm, startDate, endDate, next) => {
 
     //Filter the exams based on query params
     if (filterBy) {
-      // Check if filter_by is a valid property name
+      // Check if filterBy is a valid property name
       if (!allExamsArray[0].hasOwnProperty(filterBy)) {
         throw new Error(`Invalid filter_by parameter: ${filterBy}`);
       }
 
-      const filteredExams = allExamsArray.filter((exam) => {
-        if (filterBy === "Date") {
-          // Parse the exam date string into a Date object
-          const examDate = new Date(
-            exam.Date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3")
-          );
-          // Parse the filter start date string into a Date object
-          const startDateObject = new Date(
-            startDate.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3")
-          );
-          // Parse the filter end date string into a Date object
-          const endDateObject = new Date(
-            endDate.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3")
-          );
-          // Check if the exam date falls within the filter range
-          return (
-            examDate.getTime() >= startDateObject.getTime() &&
-            examDate.getTime() <= endDateObject.getTime()
-          );
-        } else {
-          // Filter by name or location
-          return exam[filterBy]
-            .toLowerCase()
-            .includes(filterTerm.toLowerCase());
-        }
-      });
-
-      return filteredExams;
+      if (filterBy === "Date") {
+        return filterExamsByDate(allExamsArray, startDate, endDate);
+      } else {
+        return filterExamsByNameOrLocation(allExamsArray, filterBy, filterTerm);
+      }
     } else {
       return allExamsArray;
     }
