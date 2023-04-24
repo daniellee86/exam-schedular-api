@@ -5,12 +5,6 @@ const {
 } = require("../utils/filters");
 
 const readAllExams = async (filterBy, filterTerm, startDate, endDate, next) => {
-  //Check filterby parameter
-  const validFilterProperties = ["CandidateName", "LocationName", "Date"];
-  if (filterBy && !validFilterProperties.includes(filterBy)) {
-    throw new Error(`Invalid filter_by parameter: ${filterBy}`);
-  }
-
   try {
     //read local file and parse json
     const allExams = await fs.readFile("./data/exams.json", "UTF8");
@@ -24,12 +18,25 @@ const readAllExams = async (filterBy, filterTerm, startDate, endDate, next) => {
       }
 
       if (filterBy === "Date") {
-        return filterExamsByDate(allExamsArray, startDate, endDate);
+        const filteredByDate = filterExamsByDate(
+          allExamsArray,
+          startDate,
+          endDate
+        );
+        //Return exams filtered and sorted by Date
+        return filteredByDate.sort((a, b) => a.Date - b.Date);
       } else {
-        return filterExamsByNameOrLocation(allExamsArray, filterBy, filterTerm);
+        const filteredByNameOrLocation = filterExamsByNameOrLocation(
+          allExamsArray,
+          filterBy,
+          filterTerm
+        );
+        //Return exams filtered by name or location and sorted by date
+        return filteredByNameOrLocation.sort((a, b) => a.Date - b.Date);
       }
     } else {
-      return allExamsArray;
+      //Return all exams sorted by date
+      return allExamsArray.sort((a, b) => a.Date - b.Date);
     }
   } catch (error) {
     console.error(error);
