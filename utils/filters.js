@@ -1,5 +1,8 @@
-// Transform date string from "DD/MM/YYYY" to "MM/DD/YYYY" and parse into a Date object.
+// JavaScript Date() constructor expects the date in the format "MM/DD/YYYY".
 const parseExamDate = (exam) => {
+  if (!exam || typeof exam !== "object" || typeof exam.Date !== "string") {
+    throw new Error("Invalid input");
+  }
   return new Date(exam.Date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"));
 };
 
@@ -29,4 +32,8 @@ const filterExamsByNameOrLocation = (exams, filterBy, filterTerm) => {
   });
 };
 
-module.exports = { filterExamsByDate, filterExamsByNameOrLocation };
+module.exports = {
+  filterExamsByDate,
+  filterExamsByNameOrLocation,
+  parseExamDate,
+};
