@@ -5,6 +5,12 @@ const {
 } = require("../utils/filters");
 
 const readAllExams = async (filterBy, filterTerm, startDate, endDate, next) => {
+  //Check filterby parameter
+  const validFilterProperties = ["CandidateName", "LocationName", "Date"];
+  if (filterBy && !validFilterProperties.includes(filterBy)) {
+    throw new Error(`Invalid filter_by parameter: ${filterBy}`);
+  }
+
   try {
     //read local file and parse json
     const allExams = await fs.readFile("./data/exams.json", "UTF8");
