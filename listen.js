@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 // Load environment variables from .env file
 dotenv.config();
 
-app.listen(process.env.PORT, () => {
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
   console.log("victvs server is up and running!");
 });
