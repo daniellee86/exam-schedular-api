@@ -4,6 +4,10 @@ const cors = require("cors");
 const examRoute = require("./routes/exam");
 const { handleServerErrors } = require("./errors");
 
+//Connect to mongoDb
+const { connect } = require("./db");
+connect();
+
 //Creat new express instance
 const app = express();
 

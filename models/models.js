@@ -1,10 +1,9 @@
-const fs = require("fs/promises");
+const { client } = require("../db");
 
 const readAllExams = async (next) => {
   try {
-    //read local file and parse json
-    const allExams = await fs.readFile("./data/exams.json", "UTF8");
-    const allExamsArray = JSON.parse(allExams);
+    const db = client.db("victvs");
+    const allExamsArray = await db.collection("victvs").find().toArray();
     return allExamsArray.sort((a, b) => a.Date - b.Date);
   } catch (error) {
     console.error(error);
@@ -14,12 +13,10 @@ const readAllExams = async (next) => {
 
 const readExamById = async (examId, next) => {
   try {
-    //(CANT QUERY A LOCAL JSON FILE)
-    const allExams = await fs.readFile("./data/exams.json", "UTF8");
-    const allExamsArray = JSON.parse(allExams);
-    const examById = allExamsArray.filter((exam) => {
-      return parseInt(examId) === exam.id;
-    });
+    const db = client.db("victvs");
+    const examById = await db
+      .collection("victvs")
+      .findOne({ id: parseInt(examId) });
     console.log(examById);
     return examById;
   } catch (error) {
